@@ -84,3 +84,7 @@ frontend/.idea
 *.njsproj
 *.sln
 *.sw?
+
+### Docker Volume Folders ###
+docker/data/*
+docker/recordings/*
