@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import svarcondrej.stream_rec.enums.JobStatusEnum;
 import svarcondrej.stream_rec.exceptions.RecordingJobNotFoundException;
 import svarcondrej.stream_rec.exceptions.StreamReadException;
+import svarcondrej.stream_rec.repository.RecordingScheduleRepository;
 import svarcondrej.stream_rec.service.RecordingService;
 
 import java.io.BufferedReader;
@@ -20,6 +22,12 @@ public class RecordingServiceImpl implements RecordingService {
 
     private static final Logger logger = LoggerFactory.getLogger(RecordingServiceImpl.class);
     private final Map<String, Process> activeRecordings = new ConcurrentHashMap<>();
+
+    private final RecordingScheduleRepository repository;
+
+    public RecordingServiceImpl(RecordingScheduleRepository repository) {
+        this.repository = repository;
+    }
 
     @Async
     public void startRecording(String streamUrl, String jobId) {
@@ -36,6 +44,8 @@ public class RecordingServiceImpl implements RecordingService {
         try {
             Process process = processBuilder.start();
             activeRecordings.put(jobId, process);
+
+            updateJobStatus(jobId, JobStatusEnum.RECORDING);
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
@@ -80,6 +90,8 @@ public class RecordingServiceImpl implements RecordingService {
                     logger.info("Job {} stopped and finalized the video successfully.", jobId);
                 }
 
+                updateJobStatus(jobId, JobStatusEnum.COMPLETED);
+
             } catch (Exception e) {
                 logger.error("Error while attempting to stop job: {}", jobId, e);
                 process.destroy();
@@ -88,5 +100,13 @@ public class RecordingServiceImpl implements RecordingService {
             logger.warn("No active recording found for job: {}", jobId);
             throw new RecordingJobNotFoundException("No active recording found for job: " + jobId);
         }
+    }
+
+    private void updateJobStatus(String jobId, JobStatusEnum newStatus) {
+        repository.findById(jobId).ifPresent(schedule -> {
+            schedule.setStatus(newStatus);
+            repository.save(schedule);
+            logger.info("Updated Job {} status to {}", jobId, newStatus);
+        });
     }
 }
