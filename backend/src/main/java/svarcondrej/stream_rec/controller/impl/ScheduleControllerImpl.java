@@ -28,10 +28,7 @@ public class ScheduleControllerImpl implements ScheduleController {
                     request.getEndTime()
             );
         } catch (IllegalArgumentException e) {
-            RecordingSchedule failedSchedule = new RecordingSchedule();
-            failedSchedule.setStreamUrl(request.getStreamUrl());
-            failedSchedule.setStatus(JobStatusEnum.FAILED);
-            return ResponseEntity.badRequest().body(failedSchedule);
+            return ResponseEntity.badRequest().body(null);
         }
         return ResponseEntity.ok(savedSchedule);
     }
