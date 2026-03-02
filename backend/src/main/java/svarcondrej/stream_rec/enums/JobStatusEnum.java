@@ -4,5 +4,6 @@ public enum JobStatusEnum {
     SCHEDULED,
     RECORDING,
     COMPLETED,
-    EXPIRED
+    EXPIRED,
+    FAILED
 }

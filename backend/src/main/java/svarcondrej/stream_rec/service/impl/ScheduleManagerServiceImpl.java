@@ -31,6 +31,13 @@ public class ScheduleManagerServiceImpl implements ScheduleManagerService {
     }
 
     public RecordingSchedule createSchedule(String streamUrl, LocalDateTime startTime, LocalDateTime endTime) {
+        if ( startTime.isBefore(LocalDateTime.now()) ) {
+            throw new IllegalArgumentException("Start time cannot be in the past");
+        }
+        if ( endTime.isBefore(startTime) ) {
+            throw new IllegalArgumentException("End time must be after start time");
+        }
+
         RecordingSchedule schedule = new RecordingSchedule();
         schedule.setStreamUrl(streamUrl);
         schedule.setStartTime(startTime);
