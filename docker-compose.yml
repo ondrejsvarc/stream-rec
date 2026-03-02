@@ -1,0 +1,12 @@
+services:
+  stream-recorder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stream-recorder-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./docker/recordings:/app/recordings
+      - ./docker/data:/app/data
+    restart: unless-stopped
