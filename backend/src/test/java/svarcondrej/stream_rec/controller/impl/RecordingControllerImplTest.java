@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import svarcondrej.stream_rec.dto.RecStartDto;
 import svarcondrej.stream_rec.dto.RecStopDto;
-import svarcondrej.stream_rec.exceptions.RecordingJobNotFoundException;
+import svarcondrej.stream_rec.exception.RecordingJobNotFoundException;
 import svarcondrej.stream_rec.service.RecordingService;
 
 import static org.junit.jupiter.api.Assertions.*;

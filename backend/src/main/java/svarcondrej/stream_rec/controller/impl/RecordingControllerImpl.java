@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import svarcondrej.stream_rec.controller.RecordingController;
 import svarcondrej.stream_rec.dto.RecStartDto;
 import svarcondrej.stream_rec.dto.RecStopDto;
-import svarcondrej.stream_rec.exceptions.RecordingJobNotFoundException;
+import svarcondrej.stream_rec.exception.RecordingJobNotFoundException;
 import svarcondrej.stream_rec.service.RecordingService;
 
 import java.util.UUID;

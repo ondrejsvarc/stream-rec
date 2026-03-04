@@ -1,4 +1,4 @@
-package svarcondrej.stream_rec.exceptions;
+package svarcondrej.stream_rec.exception;
 
 public class StreamReadException extends RuntimeException {
     public StreamReadException(String message) {

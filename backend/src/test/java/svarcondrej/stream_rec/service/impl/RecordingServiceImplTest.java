@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 import svarcondrej.stream_rec.enums.JobStatusEnum;
-import svarcondrej.stream_rec.exceptions.RecordingJobNotFoundException;
+import svarcondrej.stream_rec.exception.RecordingJobNotFoundException;
 import svarcondrej.stream_rec.model.RecordingSchedule;
 import svarcondrej.stream_rec.repository.RecordingScheduleRepository;
 
