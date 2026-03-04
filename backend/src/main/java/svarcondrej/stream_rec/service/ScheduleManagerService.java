@@ -5,8 +5,11 @@ import svarcondrej.stream_rec.model.RecordingSchedule;
 import svarcondrej.stream_rec.repository.RecordingScheduleRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface ScheduleManagerService {
+
+    public List<RecordingSchedule> getAllSchedules();
 
     public RecordingSchedule createSchedule(String streamUrl, LocalDateTime startTime, LocalDateTime endTime);
 
