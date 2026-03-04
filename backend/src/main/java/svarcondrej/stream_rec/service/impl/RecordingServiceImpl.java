@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import svarcondrej.stream_rec.enums.JobStatusEnum;
-import svarcondrej.stream_rec.exceptions.RecordingJobNotFoundException;
-import svarcondrej.stream_rec.exceptions.StreamReadException;
+import svarcondrej.stream_rec.exception.RecordingJobNotFoundException;
+import svarcondrej.stream_rec.exception.StreamReadException;
 import svarcondrej.stream_rec.repository.RecordingScheduleRepository;
 import svarcondrej.stream_rec.service.RecordingService;
 

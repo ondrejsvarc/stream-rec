@@ -1,4 +1,4 @@
-package svarcondrej.stream_rec.exceptions;
+package svarcondrej.stream_rec.exception;
 
 public class InvalidPasswordException extends RuntimeException {
     public InvalidPasswordException(String message) {

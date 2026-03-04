@@ -1,4 +1,4 @@
-package svarcondrej.stream_rec.exceptions;
+package svarcondrej.stream_rec.exception;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {
