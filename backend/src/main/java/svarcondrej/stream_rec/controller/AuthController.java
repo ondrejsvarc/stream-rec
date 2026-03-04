@@ -7,6 +7,8 @@ import java.util.Map;
 
 public interface AuthController {
 
+    public ResponseEntity<?> getCurrentUser();
+
     public ResponseEntity<?> login (@RequestBody Map<String, String> credentials);
 
     public ResponseEntity<?> changePassword (@RequestBody Map<String, String> request);

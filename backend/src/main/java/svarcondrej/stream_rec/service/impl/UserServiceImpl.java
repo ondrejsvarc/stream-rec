@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import svarcondrej.stream_rec.enums.Role;
 import svarcondrej.stream_rec.exceptions.IncorrectPasswordException;
 import svarcondrej.stream_rec.exceptions.InvalidPasswordException;
 import svarcondrej.stream_rec.exceptions.UserAlreadyExistsException;
@@ -12,6 +13,8 @@ import svarcondrej.stream_rec.exceptions.UserNotFoundException;
 import svarcondrej.stream_rec.model.User;
 import svarcondrej.stream_rec.repository.UserRepository;
 import svarcondrej.stream_rec.service.UserService;
+
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -29,22 +32,39 @@ public class UserServiceImpl implements UserService {
     public void seedInitialUser () {
         if ( userRepository.count() == 0 ) {
             logger.info("No users found in database. Creating default 'admin' user.");
-            createUser("admin", "p4sswOrd");
+            createUser("admin", "p4sswOrd", Role.ADMIN);
             logger.warn("IMPORTANT: Please log in and change the default 'admin' password immediately!");
         }
     }
 
-    public User createUser (String username, String rawPassword) {
+    public User createUser (String username, String rawPassword, Role role) {
         if ( userRepository.findByUsername(username).isPresent() ) {
             throw new UserAlreadyExistsException("Username '" + username + "' already exists.");
         }
-
         validatePasswordComplexity(rawPassword);
 
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(rawPassword));
+        user.setRole(role);
         return userRepository.save(user);
+    }
+
+    public User createUser (String username, String rawPassword) {
+        return createUser(username, rawPassword, Role.USER);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public void deleteUser (String id) {
+        userRepository.deleteById(id);
+    }
+
+    public User findByUsername (String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
     }
 
     public void changePassword (String username, String oldPassword, String newPassword) {

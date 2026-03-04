@@ -13,6 +13,7 @@ import svarcondrej.stream_rec.controller.AuthController;
 import svarcondrej.stream_rec.exceptions.IncorrectPasswordException;
 import svarcondrej.stream_rec.exceptions.InvalidPasswordException;
 import svarcondrej.stream_rec.exceptions.UserNotFoundException;
+import svarcondrej.stream_rec.model.User;
 import svarcondrej.stream_rec.security.JwtUtil;
 import svarcondrej.stream_rec.service.UserService;
 
@@ -33,6 +34,16 @@ public class AuthControllerImpl implements AuthController {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userService = userService;
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.findByUsername(username);
+        return ResponseEntity.ok(Map.of(
+                "username", user.getUsername(),
+                "role", user.getRole().name()
+        ));
     }
 
     @PostMapping("/login")

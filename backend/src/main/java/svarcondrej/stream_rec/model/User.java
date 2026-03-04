@@ -2,6 +2,7 @@ package svarcondrej.stream_rec.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import svarcondrej.stream_rec.enums.Role;
 
 import java.util.UUID;
 
@@ -18,4 +19,8 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER;
 }
