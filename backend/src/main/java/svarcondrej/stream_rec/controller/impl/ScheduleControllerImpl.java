@@ -8,6 +8,8 @@ import svarcondrej.stream_rec.enums.JobStatusEnum;
 import svarcondrej.stream_rec.model.RecordingSchedule;
 import svarcondrej.stream_rec.service.ScheduleManagerService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/schedules")
 @CrossOrigin(origins = "*")
@@ -16,6 +18,11 @@ public class ScheduleControllerImpl implements ScheduleController {
 
     public ScheduleControllerImpl(ScheduleManagerService scheduleManagerService) {
         this.scheduleManagerService = scheduleManagerService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<RecordingSchedule>> getAllSchedules() {
+        return ResponseEntity.ok(scheduleManagerService.getAllSchedules());
     }
 
     @PostMapping

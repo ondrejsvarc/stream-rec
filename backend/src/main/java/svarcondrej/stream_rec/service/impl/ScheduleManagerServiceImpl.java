@@ -14,6 +14,7 @@ import svarcondrej.stream_rec.service.ScheduleManagerService;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +29,11 @@ public class ScheduleManagerServiceImpl implements ScheduleManagerService {
     public ScheduleManagerServiceImpl(Scheduler scheduler, RecordingScheduleRepository repository) {
         this.scheduler = scheduler;
         this.repository = repository;
+    }
+
+    public List<RecordingSchedule> getAllSchedules() {
+        return repository.findAll().stream().sorted(Comparator.comparing(RecordingSchedule::getStartTime))
+                .toList();
     }
 
     public RecordingSchedule createSchedule(String streamUrl, LocalDateTime startTime, LocalDateTime endTime) {
