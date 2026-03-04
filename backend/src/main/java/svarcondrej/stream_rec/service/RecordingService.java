@@ -1,6 +1,6 @@
 package svarcondrej.stream_rec.service;
 
-import svarcondrej.stream_rec.exceptions.RecordingJobNotFoundException;
+import svarcondrej.stream_rec.exception.RecordingJobNotFoundException;
 
 /**
  * Service interface for managing the lifecycle of stream recordings.
