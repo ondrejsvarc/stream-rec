@@ -11,3 +11,8 @@ spring:
     show-sql: false
   quartz:
     job-store-type: memory
+
+app:
+  security:
+    # (at least 256 bits/32 characters)
+    jwt-secret: ht5d8sg12-oap57as7-25874snh-p8hhh6vf
