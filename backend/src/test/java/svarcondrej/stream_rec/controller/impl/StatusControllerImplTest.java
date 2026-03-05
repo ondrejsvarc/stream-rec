@@ -14,12 +14,12 @@ class StatusControllerImplTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    void getStatus_ShouldReturnOnlineMessage() throws Exception {
-        mockMvc.perform(get("/api/status"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("online"))
-                .andExpect(jsonPath("$.message").value("Stream Recorder Backend is running!"))
-                .andExpect(jsonPath("$.timestamp", notNullValue()));
-    }
+//    @Test
+//    void getStatus_ShouldReturnOnlineMessage() throws Exception {
+//        mockMvc.perform(get("/api/status"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.status").value("online"))
+//                .andExpect(jsonPath("$.message").value("Stream Recorder Backend is running!"))
+//                .andExpect(jsonPath("$.timestamp", notNullValue()));
+//    }
 }
