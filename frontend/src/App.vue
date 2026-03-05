@@ -4,11 +4,13 @@ import api from './services/api'
 import Login from './components/Login.vue'
 import Navbar from './components/Navbar.vue'
 import Dashboard from './components/Dashboard.vue'
+import VideoPlayer from './components/VideoPlayer.vue'
 import ChangePasswordModal from './components/ChangePasswordModal.vue'
 import UserManagementModal from './components/UserManagementModal.vue'
 
 const isAuthenticated = ref(!!localStorage.getItem('jwt_token'))
 const currentUser = ref({ username: '', role: '' })
+const currentView = ref('dashboard')
 
 const showPasswordModal = ref(false)
 const showUserModal = ref(false)
@@ -51,13 +53,14 @@ const handleLogout = () => {
           @logout="handleLogout"
           @open-password-modal="showPasswordModal = true"
           @open-user-modal="showUserModal = true"
+          @navigate="(view) => currentView = view"
       />
 
-      <Dashboard />
+      <Dashboard v-if="currentView === 'dashboard'" />
+      <VideoPlayer v-if="currentView === 'recordings'" />
 
       <ChangePasswordModal v-if="showPasswordModal" @close="showPasswordModal = false" />
       <UserManagementModal v-if="showUserModal" @close="showUserModal = false" :currentUser="currentUser" />
-
     </div>
   </div>
 </template>
