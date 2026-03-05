@@ -14,6 +14,9 @@ import svarcondrej.stream_rec.model.User;
 import svarcondrej.stream_rec.repository.UserRepository;
 import svarcondrej.stream_rec.service.UserService;
 
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -23,16 +26,46 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
+    private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String NUMBERS = "0123456789";
+    private static final String ALL_CHARS = LOWERCASE + UPPERCASE + NUMBERS;
+    private static final SecureRandom random = new SecureRandom();
+
     public UserServiceImpl (UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
+    private String generateSecurePassword (int length) {
+        List<Character> passwordChars = new ArrayList<>(length);
+
+        passwordChars.add(LOWERCASE.charAt(random.nextInt(LOWERCASE.length())));
+        passwordChars.add(UPPERCASE.charAt(random.nextInt(UPPERCASE.length())));
+        passwordChars.add(NUMBERS.charAt(random.nextInt(NUMBERS.length())));
+
+        for ( int i = 3; i < length; i++ ) {
+            passwordChars.add(ALL_CHARS.charAt(random.nextInt(ALL_CHARS.length())));
+        }
+
+        Collections.shuffle(passwordChars, random);
+
+        StringBuilder password = new StringBuilder(length);
+        for ( Character c : passwordChars ) {
+            password.append(c);
+        }
+
+        return password.toString();
+    }
+
     @PostConstruct
     public void seedInitialUser () {
         if ( userRepository.count() == 0 ) {
-            logger.info("No users found in database. Creating default 'admin' user.");
-            createUser("admin", "p4sswOrd", Role.ADMIN);
+            logger.warn("No users found in database. Creating default 'admin' user.");
+            String defaultUsername = "admin";
+            String defaultPassword = generateSecurePassword(8);
+            createUser(defaultUsername, defaultPassword, Role.ADMIN);
+            logger.warn("\n----------------------------------------\n|     Generated password: {}     |\n----------------------------------------\n", defaultPassword);
             logger.warn("IMPORTANT: Please log in and change the default 'admin' password immediately!");
         }
     }
