@@ -4,7 +4,7 @@ import { ref } from 'vue'
 const props = defineProps({
   currentUser: Object
 })
-const emit = defineEmits(['logout', 'open-password-modal', 'open-user-modal'])
+const emit = defineEmits(['logout', 'open-password-modal', 'open-user-modal', 'navigate'])
 
 const showDropdown = ref(false)
 const toggleDropdown = () => { showDropdown.value = !showDropdown.value }
@@ -17,7 +17,15 @@ const triggerLogout = () => {
 
 <template>
   <div class="header">
-    <h1>Stream Recorder</h1>
+    <div class="brand-and-nav">
+      <h1>Stream Recorder</h1>
+
+      <nav class="main-nav">
+        <a href="#" @click.prevent="emit('navigate', 'dashboard')">Schedules</a>
+        <a href="#" @click.prevent="emit('navigate', 'recordings')">Recordings Library</a>
+      </nav>
+    </div>
+
     <div class="user-menu">
       <button @click="toggleDropdown" class="avatar-btn">
         👤 {{ currentUser.username }} ▼
@@ -48,4 +56,9 @@ const triggerLogout = () => {
 .dropdown-content a:hover { background-color: #f1f3f5; }
 .dropdown-content hr { margin: 0; border: none; border-top: 1px solid #eee; }
 .logout-link { color: #dc3545 !important; }
+.brand-and-nav { display: flex; align-items: center; gap: 30px; }
+.main-nav { display: flex; gap: 15px; }
+.main-nav a { text-decoration: none; color: #495057; font-weight: bold; padding: 6px 10px; border-radius: 4px; transition: background 0.2s; }
+.main-nav a:hover { background: #e9ecef; }
+h1 { margin: 0; font-size: 1.5rem; }
 </style>
