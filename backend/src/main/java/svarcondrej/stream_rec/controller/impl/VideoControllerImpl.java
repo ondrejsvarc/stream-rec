@@ -2,57 +2,38 @@ package svarcondrej.stream_rec.controller.impl;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import svarcondrej.stream_rec.controller.VideoController;
+import svarcondrej.stream_rec.model.RecordingJob;
+import svarcondrej.stream_rec.repository.RecordingJobRepository;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/videos")
 @CrossOrigin(origins = "*")
-public class VideoControllerImpl {
+public class VideoControllerImpl implements VideoController {
 
-    private final String RECORDINGS_DIR = "/app/recordings";
+    private final RecordingJobRepository jobRepository;
 
-    @GetMapping
-    public ResponseEntity<List<String>> listVideos () {
-        File folder = new File(RECORDINGS_DIR);
-
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-
-        File[] files = folder.listFiles((dir, name) -> name.endsWith(".mp4") || name.endsWith(".webm") || name.endsWith(".mkv"));
-
-        if (files == null) {
-            return ResponseEntity.ok(List.of());
-        }
-
-        List<String> fileNames = Arrays.stream(files)
-                .map(File::getName)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(fileNames);
+    public VideoControllerImpl (RecordingJobRepository jobRepository) {
+        this.jobRepository = jobRepository;
     }
 
-    @GetMapping("/stream/{filename}")
-    public ResponseEntity<Resource> streamVideo (@PathVariable String filename) {
-        Path filePath = Paths.get(RECORDINGS_DIR).resolve(filename).normalize();
+    @GetMapping("/stream/{jobId}")
+    public ResponseEntity<Resource> streamVideo (@PathVariable String jobId) {
 
-        if (!filePath.startsWith(Paths.get(RECORDINGS_DIR))) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        RecordingJob job = jobRepository.findById(jobId).orElse(null);
+        if ( job == null || job.getFilePath() == null ) {
+            return ResponseEntity.notFound().build();
         }
 
-        File videoFile = filePath.toFile();
-        if (!videoFile.exists()) {
+        File videoFile = new File(job.getFilePath());
+
+        if ( !videoFile.exists() ) {
             return ResponseEntity.notFound().build();
         }
 
