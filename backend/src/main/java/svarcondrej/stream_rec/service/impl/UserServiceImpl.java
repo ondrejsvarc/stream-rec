@@ -13,6 +13,7 @@ import svarcondrej.stream_rec.exception.UserNotFoundException;
 import svarcondrej.stream_rec.model.User;
 import svarcondrej.stream_rec.repository.UserRepository;
 import svarcondrej.stream_rec.service.UserService;
+import svarcondrej.stream_rec.util.DatabaseLock;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -80,7 +81,13 @@ public class UserServiceImpl implements UserService {
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(rawPassword));
         user.setRole(role);
-        return userRepository.save(user);
+
+        DatabaseLock.WRITE_LOCK.lock();
+        try {
+            return userRepository.save(user);
+        } finally {
+            DatabaseLock.WRITE_LOCK.unlock();
+        }
     }
 
     public User createUser (String username, String rawPassword) {
@@ -92,7 +99,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public void deleteUser (String id) {
-        userRepository.deleteById(id);
+        DatabaseLock.WRITE_LOCK.lock();
+        try {
+            userRepository.deleteById(id);
+        } finally {
+            DatabaseLock.WRITE_LOCK.unlock();
+        }
     }
 
     public User findByUsername (String username) {
@@ -111,7 +123,14 @@ public class UserServiceImpl implements UserService {
         validatePasswordComplexity(newPassword);
 
         user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
+
+        DatabaseLock.WRITE_LOCK.lock();
+        try {
+            userRepository.save(user);
+        } finally {
+            DatabaseLock.WRITE_LOCK.unlock();
+        }
+
         logger.info("Password changed successfully for user: {}", username);
     }
 

@@ -15,6 +15,7 @@ import svarcondrej.stream_rec.repository.RecordingFileRepository;
 import svarcondrej.stream_rec.repository.RecordingJobRepository;
 import svarcondrej.stream_rec.repository.RecordingScheduleRepository;
 import svarcondrej.stream_rec.service.ScheduleManagerService;
+import svarcondrej.stream_rec.util.DatabaseLock;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -69,7 +70,13 @@ public class RecordingServiceImpl {
         job.setActualStartTime(LocalDateTime.now());
         job.setFilePath(fullPath);
         job.setStatus(JobStatusEnum.RECORDING);
-        job = jobRepository.save(job);
+
+        DatabaseLock.WRITE_LOCK.lock();
+        try {
+            job = jobRepository.save(job);
+        } finally {
+            DatabaseLock.WRITE_LOCK.unlock();
+        }
 
         activeJobIds.put(scheduleId, job.getId());
 
@@ -155,11 +162,25 @@ public class RecordingServiceImpl {
                     recordingFile.setFilename(file.getName());
                     recordingFile.setFilepath(job.getFilePath());
                     recordingFile.setOwner(job.getSchedule().getUser());
-                    recordingFileRepository.save(recordingFile);
+
+                    DatabaseLock.WRITE_LOCK.lock();
+                    try {
+                        recordingFileRepository.save(recordingFile);
+                        jobRepository.save(job);
+                    } finally {
+                        DatabaseLock.WRITE_LOCK.unlock();
+                    }
+
                     logger.info("Registered new RecordingFile: {}", recordingFile.getFilename());
+                    return;
                 }
             }
-            jobRepository.save(job);
+            DatabaseLock.WRITE_LOCK.lock();
+            try {
+                jobRepository.save(job);
+            } finally {
+                DatabaseLock.WRITE_LOCK.unlock();
+            }
         });
     }
 
@@ -198,7 +219,13 @@ public class RecordingServiceImpl {
         }
 
         schedule.setStartTime(nextRun);
-        scheduleRepository.save(schedule);
+
+        DatabaseLock.WRITE_LOCK.lock();
+        try {
+            scheduleRepository.save(schedule);
+        } finally {
+            DatabaseLock.WRITE_LOCK.unlock();
+        }
 
         logger.info("Schedule {} is repeating. Next run time updated to: {}", schedule.getId(), nextRun);
 

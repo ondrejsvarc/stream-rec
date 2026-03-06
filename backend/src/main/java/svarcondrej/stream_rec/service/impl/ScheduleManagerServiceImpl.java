@@ -19,6 +19,7 @@ import svarcondrej.stream_rec.model.User;
 import svarcondrej.stream_rec.repository.RecordingScheduleRepository;
 import svarcondrej.stream_rec.repository.UserRepository;
 import svarcondrej.stream_rec.service.ScheduleManagerService;
+import svarcondrej.stream_rec.util.DatabaseLock;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -48,7 +49,13 @@ public class ScheduleManagerServiceImpl implements ScheduleManagerService {
         schedule.setUser(user);
         schedule.setStatus(ScheduleStatusEnum.SCHEDULED);
 
-        schedule = scheduleRepository.save(schedule);
+        DatabaseLock.WRITE_LOCK.lock();
+        try {
+            schedule = scheduleRepository.save(schedule);
+        } finally {
+            DatabaseLock.WRITE_LOCK.unlock();
+        }
+
         logger.info("Created new schedule ID: {} for user: {}", schedule.getId(), username);
 
         queueQuartzJobs(schedule);
@@ -70,7 +77,13 @@ public class ScheduleManagerServiceImpl implements ScheduleManagerService {
         removeQuartzJobs(schedule.getId());
 
         schedule = mapRequestToEntity(request, schedule);
-        schedule = scheduleRepository.save(schedule);
+
+        DatabaseLock.WRITE_LOCK.lock();
+        try {
+            schedule = scheduleRepository.save(schedule);
+        } finally {
+            DatabaseLock.WRITE_LOCK.unlock();
+        }
 
         logger.info("Updated schedule ID: {} by user: {}", schedule.getId(), username);
 
@@ -93,7 +106,14 @@ public class ScheduleManagerServiceImpl implements ScheduleManagerService {
         }
 
         removeQuartzJobs(scheduleId);
-        scheduleRepository.delete(schedule);
+
+        DatabaseLock.WRITE_LOCK.lock();
+        try {
+            scheduleRepository.delete(schedule);
+        } finally {
+            DatabaseLock.WRITE_LOCK.unlock();
+        }
+
         logger.info("Deleted schedule ID: {}", scheduleId);
     }
 
