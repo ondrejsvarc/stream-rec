@@ -3,7 +3,7 @@ package svarcondrej.stream_rec.controller.impl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import svarcondrej.stream_rec.controller.AdminController;
-import svarcondrej.stream_rec.enums.Role;
+import svarcondrej.stream_rec.enums.RoleEnum;
 import svarcondrej.stream_rec.model.User;
 import svarcondrej.stream_rec.service.UserService;
 
@@ -31,7 +31,7 @@ public class AdminControllerImpl implements AdminController {
         User newUser = userService.createUser(
                 request.get("username"),
                 request.get("password"),
-                Role.valueOf(request.get("role").toUpperCase())
+                RoleEnum.valueOf(request.get("role").toUpperCase())
         );
         return ResponseEntity.ok(newUser);
     }

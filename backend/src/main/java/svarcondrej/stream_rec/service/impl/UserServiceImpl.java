@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import svarcondrej.stream_rec.enums.Role;
+import svarcondrej.stream_rec.enums.RoleEnum;
 import svarcondrej.stream_rec.exception.IncorrectPasswordException;
 import svarcondrej.stream_rec.exception.InvalidPasswordException;
 import svarcondrej.stream_rec.exception.UserAlreadyExistsException;
@@ -64,13 +64,13 @@ public class UserServiceImpl implements UserService {
             logger.warn("No users found in database. Creating default 'admin' user.");
             String defaultUsername = "admin";
             String defaultPassword = generateSecurePassword(8);
-            createUser(defaultUsername, defaultPassword, Role.ADMIN);
+            createUser(defaultUsername, defaultPassword, RoleEnum.ADMIN);
             logger.warn("\n----------------------------------------\n|     Generated password: {}     |\n----------------------------------------\n", defaultPassword);
             logger.warn("IMPORTANT: Please log in and change the default 'admin' password immediately!");
         }
     }
 
-    public User createUser (String username, String rawPassword, Role role) {
+    public User createUser (String username, String rawPassword, RoleEnum role) {
         if ( userRepository.findByUsername(username).isPresent() ) {
             throw new UserAlreadyExistsException("Username '" + username + "' already exists.");
         }
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User createUser (String username, String rawPassword) {
-        return createUser(username, rawPassword, Role.USER);
+        return createUser(username, rawPassword, RoleEnum.USER);
     }
 
     public List<User> getAllUsers() {

@@ -8,7 +8,12 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class ScheduleRequestDto {
+    private String name;
     private String streamUrl;
     private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private Integer duration;
+    private String repetition;
+    private Integer customRepetitionDays;
+    private String codec;
+    private Integer maxTranscodeBitrate;
 }

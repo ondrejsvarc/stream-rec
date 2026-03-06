@@ -3,7 +3,7 @@ package svarcondrej.stream_rec.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-import svarcondrej.stream_rec.enums.Role;
+import svarcondrej.stream_rec.enums.RoleEnum;
 
 import java.util.UUID;
 
@@ -24,5 +24,5 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role = Role.USER;
+    private RoleEnum role = RoleEnum.USER;
 }
