@@ -2,8 +2,10 @@ spring:
   application:
     name: stream_recorder
   datasource:
-    url: jdbc:sqlite:data/recorder.db
+    url: jdbc:sqlite:data/recorder.db?journal_mode=WAL&busy_timeout=5000
     driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 5
   jpa:
     database-platform: org.hibernate.community.dialect.SQLiteDialect
     hibernate:

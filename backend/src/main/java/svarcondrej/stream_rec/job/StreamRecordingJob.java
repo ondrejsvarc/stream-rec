@@ -6,15 +6,15 @@ import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import svarcondrej.stream_rec.service.RecordingService;
+import svarcondrej.stream_rec.service.impl.RecordingServiceImpl;
 
 @Component
 public class StreamRecordingJob implements Job {
 
     private static final Logger logger = LoggerFactory.getLogger(StreamRecordingJob.class);
-    private final RecordingService recordingService;
+    private final RecordingServiceImpl recordingService;
 
-    public StreamRecordingJob (RecordingService recordingService) {
+    public StreamRecordingJob (RecordingServiceImpl recordingService) {
         this.recordingService = recordingService;
     }
 
