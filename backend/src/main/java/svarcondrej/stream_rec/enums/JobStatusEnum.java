@@ -1,9 +1,8 @@
 package svarcondrej.stream_rec.enums;
 
 public enum JobStatusEnum {
-    SCHEDULED,
     RECORDING,
+    PROCESSING,
     COMPLETED,
-    EXPIRED,
     FAILED
 }
