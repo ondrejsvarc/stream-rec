@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import svarcondrej.stream_rec.enums.JobStatusEnum;
 import svarcondrej.stream_rec.enums.ScheduleRepetitionEnum;
 import svarcondrej.stream_rec.enums.ScheduleStatusEnum;
+import svarcondrej.stream_rec.model.RecordingFile;
 import svarcondrej.stream_rec.model.RecordingJob;
 import svarcondrej.stream_rec.model.RecordingSchedule;
+import svarcondrej.stream_rec.repository.RecordingFileRepository;
 import svarcondrej.stream_rec.repository.RecordingJobRepository;
 import svarcondrej.stream_rec.repository.RecordingScheduleRepository;
 import svarcondrej.stream_rec.service.ScheduleManagerService;
@@ -35,13 +37,16 @@ public class RecordingServiceImpl {
     private final RecordingScheduleRepository scheduleRepository;
     private final RecordingJobRepository jobRepository;
     private final ScheduleManagerService scheduleManagerService;
+    private final RecordingFileRepository recordingFileRepository;
 
     public RecordingServiceImpl (RecordingScheduleRepository scheduleRepository,
                                 RecordingJobRepository jobRepository,
-                                @Lazy ScheduleManagerService scheduleManagerService) {
+                                @Lazy ScheduleManagerService scheduleManagerService,
+                                 RecordingFileRepository recordingFileRepository) {
         this.scheduleRepository = scheduleRepository;
         this.jobRepository = jobRepository;
         this.scheduleManagerService = scheduleManagerService;
+        this.recordingFileRepository = recordingFileRepository;
     }
 
     @Async
@@ -145,10 +150,16 @@ public class RecordingServiceImpl {
                 if ( !file.exists() || file.length() == 0 ) {
                     job.setStatus(JobStatusEnum.FAILED);
                     logger.error("Job {} marked as FAILED because output file is missing or empty.", jobId);
+                } else if ( newStatus == JobStatusEnum.COMPLETED ) {
+                    RecordingFile recordingFile = new RecordingFile();
+                    recordingFile.setFilename(file.getName());
+                    recordingFile.setFilepath(job.getFilePath());
+                    recordingFile.setOwner(job.getSchedule().getUser());
+                    recordingFileRepository.save(recordingFile);
+                    logger.info("Registered new RecordingFile: {}", recordingFile.getFilename());
                 }
             }
             jobRepository.save(job);
-            logger.info("Updated Job {} status to {}", jobId, newStatus);
         });
     }
 
