@@ -148,7 +148,7 @@ public class RecordingServiceImpl {
     }
 
     private void updateJobStatus (String jobId, JobStatusEnum newStatus) {
-        jobRepository.findById(jobId).ifPresent(job -> {
+        jobRepository.findWithScheduleAndUserById(jobId).ifPresent(job -> {
             job.setStatus(newStatus);
             if ( newStatus == JobStatusEnum.COMPLETED || newStatus == JobStatusEnum.FAILED ) {
                 job.setActualEndTime(LocalDateTime.now());

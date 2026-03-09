@@ -16,6 +16,7 @@ import svarcondrej.stream_rec.exception.UserNotFoundException;
 import svarcondrej.stream_rec.job.StreamRecordingJob;
 import svarcondrej.stream_rec.model.RecordingSchedule;
 import svarcondrej.stream_rec.model.User;
+import svarcondrej.stream_rec.repository.RecordingJobRepository;
 import svarcondrej.stream_rec.repository.RecordingScheduleRepository;
 import svarcondrej.stream_rec.repository.UserRepository;
 import svarcondrej.stream_rec.service.ScheduleManagerService;
@@ -34,11 +35,13 @@ public class ScheduleManagerServiceImpl implements ScheduleManagerService {
     private final Scheduler scheduler;
     private final RecordingScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final RecordingJobRepository recordingJobRepository;
 
-    public ScheduleManagerServiceImpl (Scheduler scheduler, RecordingScheduleRepository scheduleRepository, UserRepository userRepository) {
+    public ScheduleManagerServiceImpl (Scheduler scheduler, RecordingScheduleRepository scheduleRepository, UserRepository userRepository, RecordingJobRepository recordingJobRepository) {
         this.scheduler = scheduler;
         this.scheduleRepository = scheduleRepository;
         this.userRepository = userRepository;
+        this.recordingJobRepository = recordingJobRepository;
     }
 
     public RecordingSchedule createSchedule (ScheduleRequestDto request, String username) {
@@ -109,6 +112,8 @@ public class ScheduleManagerServiceImpl implements ScheduleManagerService {
 
         DatabaseLock.WRITE_LOCK.lock();
         try {
+            var jobs = recordingJobRepository.findByScheduleId(scheduleId);
+            recordingJobRepository.deleteAll(jobs);
             scheduleRepository.delete(schedule);
         } finally {
             DatabaseLock.WRITE_LOCK.unlock();

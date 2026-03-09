@@ -1,5 +1,6 @@
 package svarcondrej.stream_rec.exception;
 
+import org.apache.catalina.connector.ClientAbortException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -54,8 +55,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             AuthenticationException.class
     })
-    public ResponseEntity<String> handleAuthenticationExceptions(AuthenticationException ex) {
+    public ResponseEntity<String> handleAuthenticationExceptions (AuthenticationException ex) {
         logger.warn("Authentication failed: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password.");
+    }
+
+    @ExceptionHandler(ClientAbortException.class)
+    public void handleClientAbortException (ClientAbortException ex) {
+        logger.debug("Client closed the connection early (likely a video player buffering).");
     }
 }
