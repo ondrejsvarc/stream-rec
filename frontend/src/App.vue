@@ -56,8 +56,8 @@ const handleLogout = () => {
           @navigate="(view) => currentView = view"
       />
 
-      <Dashboard v-if="currentView === 'dashboard'" />
-      <VideoPlayer v-if="currentView === 'recordings'" />
+      <Dashboard v-if="currentView === 'dashboard'" :currentUser="currentUser" />
+      <VideoPlayer v-if="currentView === 'recordings'" :currentUser="currentUser" />
 
       <ChangePasswordModal v-if="showPasswordModal" @close="showPasswordModal = false" />
       <UserManagementModal v-if="showUserModal" @close="showUserModal = false" :currentUser="currentUser" />
